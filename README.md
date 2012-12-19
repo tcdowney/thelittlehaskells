@@ -5,7 +5,7 @@ For my [C335 Computer Structures](http://cgi.cs.indiana.edu/~geobrown/c335) cour
 
 Our final project was to create a simple game for the board using an [Adafruit 1.8" LCD](https://www.adafruit.com/products/358) as the display, Wii nunchucks for player control, and the chip's onboard DAC capabilities to output audio.
 
-My game was named "The Little Haskells."  It's about a team of "rockstar programmers" and was meant to be a tongue-in-cheek reference to The Little Rascals.  The objective of the game is to pilot a ship through enemy networks and survive long enough to "reverse hack" into their systems.
+The game's name, "The Little Haskells," was meant to be a tongue-in-cheek reference to The Little Rascals.  The Little Haskells are a crack team of "rockstar programmers" who defend America through the power of buzzwords.  The objective of the game is to pilot a ship through enemy networks and survive long enough to "reverse hack" into their systems.
 
 [Here is a demo video of the game running.](http://www.youtube.com/watch?v=iOoo_a4vqDI)
 
