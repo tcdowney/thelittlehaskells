@@ -48,8 +48,8 @@ int abs(int x);
 void swap(int *x, int *y);
 
 void ST7735_setAddrWindow(uint16_t x0, uint16_t y0,
-                          uint16_t x1, uint16_t y1,
-                          uint8_t madctl);
+			  uint16_t x1, uint16_t y1,
+			  uint8_t madctl);
 
 void ST7735_pushColor(uint16_t *color, int cnt);
 
