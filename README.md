@@ -22,4 +22,10 @@ Additionally, we used the [FatFS file system](http://elm-chan.org/fsw/ff/00index
 
 Installation
 --------------
-Coming soon...
+1. First download the STM standard libraries: [STM32F10x_StdPeriph_Lib_V3.5.0](http://www.st.com/internet/com/SOFTWARE_RESOURCES/SW_COMPONENT/FIRMWARE/stm32f10x_stdperiph_lib.zip)
+2. Next download the [CodeSourcery GNU toolchain](http://www.mentor.com/embedded-software/sourcery-tools/sourcery-codebench/editions/lite-edition/)
+3. Clone the [STM32-Template repository](https://github.com/geoffreymbrown/STM32-Template).
+4. Modify the Tool path and Library path in `Makefile.common` to point to the CodeSourcery toolchain and STM32 standard peripheral libraries.  
+5. Edit the `Makefile` in the "thelittlehaskells" repository to point to your cloned STM32-Template.
+6. Transfer the contents of the `Assets` folder to the root level of your micro SD card.
+7. Properly wire your components (coming soon...)
