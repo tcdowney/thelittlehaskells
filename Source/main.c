@@ -108,7 +108,7 @@ void loadBackground(char *img, int x, int y) {
   f = f_close(&Fil);
 }*/
 
-void main() {
+int main() {
 
     //Start system core clock
     if (SysTick_Config(SystemCoreClock / 1000))
@@ -541,6 +541,7 @@ void main() {
     }
     Beep(1000);
 
+    return 0;
 }
 
 DWORD get_fattime (void) {
