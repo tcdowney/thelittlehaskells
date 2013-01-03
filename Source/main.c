@@ -22,8 +22,9 @@ typedef struct {
     int8_t width;
 } sprite;
 
-//Needed for "preloading" the player's ship
-//struct bmppixel shipdata[425];
+/*Needed for "preloading" the player's ship
+This is disabled for the time being due to memory constraints
+struct bmppixel shipdata[425];*/
 
 //Receive and transfer buffers
 struct bmppixel receive[128] = {0};
@@ -36,21 +37,23 @@ struct bmppixel pixel24 = {0};
 uint16_t pixel16 = 0;
 BITMAPINFOHEADER info = {0};
 
+//These store the rgb values of the bmp images after 24 -> 16 bit conversion
 uint16_t r = 0;
 uint16_t g = 0;
 uint16_t b = 0;
 
 
-//Shifts the joystick values from the nunchuck into a more manageable range
+//Shifts the joystick values from the first (ship) nunchuck into a more manageable range
 int joyShift(int joyVal) {
     return (joyVal / 30);
 }
 
-//Shifts the joystick values from the nunchuck into a more manageable range
+//Shifts the joystick values from the second (reticule) nunchuck into a more manageable range
 int joyShift2(int joyVal) {
     return (joyVal / 20);
 }
 
+//Play an auditory beep over the speaker for the specified length of time (in milliseconds)
 void Beep(int length) {
     audioplayerInit(44100);
     audioplayerStart();
@@ -58,7 +61,7 @@ void Beep(int length) {
     audioplayerStop();
 }
 
-//Generally used for loading full screen background images
+//Load full screen background images from the bottom up
 void loadBackground(char *img, int x, int y) {
 
     //FatFS variables
@@ -90,8 +93,9 @@ void loadBackground(char *img, int x, int y) {
     f = f_close(&Fil);
 }
 
-//Preloads the player's ship
-/*void loadShip(char *img) {
+/*Preloads the player's ship
+This is disabled for the time being due to memory constraints
+void loadShip(char *img) {
   //FatFS variables
 	FATFS Fatfs;
 	FIL Fil;
@@ -108,24 +112,26 @@ void loadBackground(char *img, int x, int y) {
   f = f_close(&Fil);
 }*/
 
-int main() {
+int main(void) {
 
     //Start system core clock
     if (SysTick_Config(SystemCoreClock / 1000))
         while (1);
 
-    //Nunchuck instructions
+    //Nunchuck initialization and reset instructions
     const uint8_t inst1[] = {0xf0, 0x55};
     const uint8_t inst2[] = {0xfb, 0x00};
     const uint8_t reset[] = {0};
 
-    //X and Y positions of the joysticks
+    //X and Y positions of the two nunchuck joysticks
     int x1 = ST7735_width / 2 - 10;
     int y1 = ST7735_height / 2 - 15;
     int x2 = ST7735_width / 2;
     int y2 = ST7735_height / 2;
 
-    //Game state
+    /*Game state variables:
+    crashes keeps track of the number of collisions (bad)
+    haxblox keeps track of the time survived (good)*/
     uint8_t crashes = 0;
     uint16_t shield = 0;
     uint16_t sfull = 50;
@@ -214,6 +220,8 @@ int main() {
     int smooth = 0;
     int image = 0;
     int k = 0;
+
+    //The filenames for the introductory images
     char *strs[6] = {"splash.bmp", "intro.bmp", "imprt.bmp", "message.bmp", "instruct.bmp"};
 
 
@@ -242,7 +250,7 @@ int main() {
     //Intro screens
     int i;
     for (i = 0; i < 5; i++) {
-        //Clear nunchuck data
+        //Reset nunchuck state
         I2C_Write(I2C1, reset, 1, NUNCHUCK_ADDRESS);
         I2C_Write(I2C2, reset, 1, NUNCHUCK_ADDRESS);
 
@@ -267,6 +275,8 @@ int main() {
     uint8_t loadingX = 60;
     uint8_t loadingY = 50;
     loadBackground("game.bmp", 0 , 0);
+
+    //Countdown until the game begins
     writeCharDMA(GREEN, BLACK, '3', loadingX, loadingY);
     Delay(1000);
     writeCharDMA(BLACK, BLACK, '3', loadingX, loadingY);
@@ -312,12 +322,6 @@ int main() {
         jy2 = (data2[1]-128);
         smoothjy2 += jy2;
 
-        // Get C and Z button status
-        /*cNotPressed1 = ((data1[5] >> 1) & 0x1);
-        zNotPressed1 = data1[5] & 0x1;
-
-        	cNotPressed2 = ((data2[5] >> 1) & 0x1);
-        zNotPressed2 = data2[5] & 0x1;*/
 
         if (smooth % 5 == 0) {
 
@@ -428,7 +432,7 @@ int main() {
                             }
                         } else //writeString(BLACK, BLACK, "CRASH 4", 0, 80);
 
-                            /*//Reticule collisions
+                            /*Reticule collisions
                             if ((reticule.x + reticule.width > ob1.x) && (reticule.x < (ob1.x + ob1.width))
                             		&& (reticule.y + reticule.height > ob1.y) && (reticule.y < (ob1.y + ob1.height))) {
                             	writeString(RED, BLACK, "CRASH 1", 60, 20);
