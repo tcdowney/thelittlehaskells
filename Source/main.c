@@ -1,3 +1,6 @@
+/*My apologies for the comment overload, they were necessary
+  since this was a graded assignment!*/
+
 #include <stm32f10x.h>
 #include <stm32f10x_i2c.h>
 #include <stm32f10x_spi.h>
@@ -407,12 +410,11 @@ int main(void)
                 ship.y = y1;
             }
 
-            //Collision detection for the ship with various objects
-            //Certain things need to be inverted to account for reverse loading of BMP vs regular graphics
+            /*Collision detection for the ship with various objects
+            Certain things need to be inverted to account for reverse loading of BMP vs regular graphics*/
             if ((ship.x + ship.width > ob1.x) && (ship.x < (ob1.x + ob1.width))
                     && (ship.y + ship.height > 160 - ob1.y) && (ship.y < 160 - (ob1.y + ob1.height)))
             {
-                //writeString(RED, BLACK, "CRASH 1", 0, 20);
                 if (shield == 0)
                 {
                     crashes++;
@@ -421,93 +423,58 @@ int main(void)
                     Beep(250);
                 }
             }
-            else   //writeString(BLACK, BLACK, "CRASH 1", 0, 20);
 
-                if ((ship.x + ship.width > ob2.x) && (ship.x < (ob2.x + ob2.width))
-                        && (ship.y + ship.height > 160 - ob2.y) && (ship.y < 160 - (ob2.y + ob2.height)))
+            if ((ship.x + ship.width > ob2.x) && (ship.x < (ob2.x + ob2.width))
+                    && (ship.y + ship.height > 160 - ob2.y) && (ship.y < 160 - (ob2.y + ob2.height)))
+            {
+                if (shield == 0)
                 {
-                    //writeString(RED, BLACK, "CRASH 2", 0, 40);
-                    if (shield == 0)
-                    {
-                        crashes++;
-                        fillBlockColor(damage.x, ST7735_height - (crashes * 20), damage.height, damage.width, RED);
-                        shield = sfull;
-                        Beep(250);
-                    }
+                    crashes++;
+                    fillBlockColor(damage.x, ST7735_height - (crashes * 20), damage.height, damage.width, RED);
+                    shield = sfull;
+                    Beep(250);
                 }
-                else   //writeString(BLACK, BLACK, "CRASH 2", 0, 40);
+            }
 
-                    if ((ship.x + ship.width > ob3.x) && (ship.x < (ob3.x + ob3.width))
-                            && (ship.y + ship.height > 160 - ob3.y) && (ship.y < 160 - (ob3.y + ob3.height)))
-                    {
-                        //writeString(RED, BLACK, "CRASH 3", 0, 60);
-                        if (shield == 0)
-                        {
-                            crashes++;
-                            fillBlockColor(damage.x, ST7735_height - (crashes * 20), damage.height, damage.width, RED);
-                            shield = sfull;
-                            Beep(250);
-                        }
-                    }
-                    else   //writeString(BLACK, BLACK, "CRASH 3", 0, 60);
 
-                        if ((ship.x + ship.width > ob4.x) && (ship.x < (ob4.x + ob4.width))
-                                && (ship.y + ship.height > 160 - ob4.y) && (ship.y < 160 - (ob4.y + ob4.height)))
-                        {
-                            //writeString(RED, BLACK, "CRASH 4", 0, 60);
-                            if (shield == 0)
-                            {
-                                crashes++;
-                                fillBlockColor(damage.x, ST7735_height - (crashes * 20), damage.height, damage.width, RED);
-                                shield = sfull;
-                                Beep(250);
-                            }
-                        }
-                        else   //writeString(BLACK, BLACK, "CRASH 4", 0, 80);
+            if ((ship.x + ship.width > ob3.x) && (ship.x < (ob3.x + ob3.width))
+                    && (ship.y + ship.height > 160 - ob3.y) && (ship.y < 160 - (ob3.y + ob3.height)))
+            {
 
-                            /*Reticule collisions
-                            if ((reticule.x + reticule.width > ob1.x) && (reticule.x < (ob1.x + ob1.width))
-                            		&& (reticule.y + reticule.height > ob1.y) && (reticule.y < (ob1.y + ob1.height))) {
-                            	writeString(RED, BLACK, "CRASH 1", 60, 20);
-                            }
-                            else writeString(BLACK, BLACK, "CRASH 1", 60, 20);
+                if (shield == 0)
+                {
+                    crashes++;
+                    fillBlockColor(damage.x, ST7735_height - (crashes * 20), damage.height, damage.width, RED);
+                    shield = sfull;
+                    Beep(250);
+                }
+            }
 
-                            if ((reticule.x + reticule.width > ob2.x) && (reticule.x < (ob2.x + ob2.width))
-                            		&& (reticule.y + reticule.height > ob2.y) && (reticule.y < (ob2.y + ob2.height))) {
-                            	writeString(RED, BLACK, "CRASH 2", 60, 40);
-                            }
-                            else writeString(BLACK, BLACK, "CRASH 2", 60, 40);
 
-                            if ((reticule.x + reticule.width > ob3.x) && (reticule.x < (ob3.x + ob3.width))
-                            		&& (reticule.y + reticule.height > ob3.y) && (reticule.y < (ob3.y + ob3.height))) {
-                            	writeString(RED, BLACK, "CRASH 3", 60, 60);
-                            }
-                            else writeString(BLACK, BLACK, "CRASH 3", 60, 60);
+            if ((ship.x + ship.width > ob4.x) && (ship.x < (ob4.x + ob4.width))
+                    && (ship.y + ship.height > 160 - ob4.y) && (ship.y < 160 - (ob4.y + ob4.height)))
+            {
 
-                            if ((reticule.x + reticule.width > ob4.x) && (reticule.x < (ob4.x + ob4.width))
-                            		&& (reticule.y + reticule.height > ob4.y) && (reticule.y < (ob4.y + ob4.height))) {
-                            	writeString(RED, BLACK, "CRASH 4", 60, 60);
-                            }
-                            else writeString(BLACK, BLACK, "CRASH 4", 60, 80);*/
+                if (shield == 0)
+                {
+                    crashes++;
+                    fillBlockColor(damage.x, ST7735_height - (crashes * 20), damage.height, damage.width, RED);
+                    shield = sfull;
+                    Beep(250);
+                }
+            }
 
-                            if ((reticule.x + reticule.width > ship.x) && (reticule.x < (ship.x + ship.width))
-                                    && (reticule.y + reticule.height > ship.y) && (reticule.y < (ship.y + ship.height)))
-                            {
-                                //writeString(RED, BLACK, "CRASH Ret", 0, 0);
-                            }
-                            else   //writeString(BLACK, BLACK, "CRASH Ret", 0, 0);
-
-                                //Boundary checking for the reticule (x2,y2)
-                                if (x2 < 20)
-                                {
-                                    x2 = 20;
-                                    reticule.x = x2;
-                                }
-                                else if ((x2 + 5) > ST7735_width - 1)
-                                {
-                                    x2 = ST7735_width - 5;
-                                    reticule.x = x2;
-                                }
+            //Boundary checking for the reticule (x2,y2)
+            if (x2 < 20)
+            {
+                x2 = 20;
+                reticule.x = x2;
+            }
+            else if ((x2 + 5) > ST7735_width - 1)
+            {
+                x2 = ST7735_width - 5;
+                reticule.x = x2;
+            }
             if (y2 < 0)
             {
                 y2 = 0;
@@ -560,7 +527,6 @@ int main(void)
             //Now we draw the objects to the screen
 
             //Place the ship
-            //placeImage(shipdata, ship.x, ship.y, ship.height, ship.width);
             fillBlockColor(ship.x, ship.y, ship.height, ship.width, CYAN);
 
             //Place the targeting reticule
@@ -572,8 +538,8 @@ int main(void)
             writeCharDMA(GREEN, BLACK, '0', ob3.x, ob3.y);
             writeCharDMA(GREEN, BLACK, '1', ob4.x, ob4.y);
 
-            //Reset the iteration counter and the smoothed values; continue to the
-            //next iteration
+            /*Reset the iteration counter and the smoothed values; continue to the
+	      next iteration*/
             smooth = 0;
             score++;
             smoothjx1 = 0;
@@ -597,6 +563,7 @@ int main(void)
     return 0;
 }
 
+//This is required for the Fat file system
 DWORD get_fattime (void)
 {
     return	  ((DWORD)(2012 - 1980) << 25)	/* Year = 2012 */
