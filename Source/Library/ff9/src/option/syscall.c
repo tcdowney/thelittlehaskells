@@ -21,7 +21,8 @@
 int ff_cre_syncobj (	/* TRUE:Function succeeded, FALSE:Could not create due to any error */
     BYTE vol,			/* Corresponding logical drive being processed */
     _SYNC_t *sobj		/* Pointer to return the created sync object */
-) {
+)
+{
     int ret;
 
     *sobj = CreateMutex(NULL, FALSE, NULL);	/* Win32 */
@@ -51,7 +52,8 @@ int ff_cre_syncobj (	/* TRUE:Function succeeded, FALSE:Could not create due to a
 
 int ff_del_syncobj (	/* TRUE:Function succeeded, FALSE:Could not delete due to any error */
     _SYNC_t sobj		/* Sync object tied to the logical drive to be deleted */
-) {
+)
+{
     BOOL ret;
 
     ret = CloseHandle(sobj);	/* Win32 */
@@ -77,7 +79,8 @@ int ff_del_syncobj (	/* TRUE:Function succeeded, FALSE:Could not delete due to a
 
 int ff_req_grant (	/* TRUE:Got a grant to access the volume, FALSE:Could not get a grant */
     _SYNC_t sobj	/* Sync object to wait */
-) {
+)
+{
     int ret;
 
     ret = (WaitForSingleObject(sobj, _FS_TIMEOUT) == WAIT_OBJECT_0);	/* Win32 */
@@ -102,7 +105,8 @@ int ff_req_grant (	/* TRUE:Got a grant to access the volume, FALSE:Could not get
 
 void ff_rel_grant (
     _SYNC_t sobj	/* Sync object to be signaled */
-) {
+)
+{
     ReleaseMutex(sobj);		/* Win32 */
 
 //	sig_sem(sobj);			/* uITRON */
@@ -127,7 +131,8 @@ void ff_rel_grant (
 
 void* ff_memalloc (	/* Returns pointer to the allocated memory block */
     UINT size		/* Number of bytes to allocate */
-) {
+)
+{
     return malloc(size);
 }
 
@@ -138,7 +143,8 @@ void* ff_memalloc (	/* Returns pointer to the allocated memory block */
 
 void ff_memfree(
     void* mblock	/* Pointer to the memory block to free */
-) {
+)
+{
     free(mblock);
 }
 

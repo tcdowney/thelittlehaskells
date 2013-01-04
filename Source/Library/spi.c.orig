@@ -6,15 +6,13 @@
 
 // enum spiSpeed { SPI_SLOW, SPI_MEDIUM, SPI_FAST };
 
-static const uint16_t speeds[] =
-{
+static const uint16_t speeds[] = {
     [SPI_SLOW] = SPI_BaudRatePrescaler_64,
     [SPI_MEDIUM] = SPI_BaudRatePrescaler_8,
     [SPI_FAST] = SPI_BaudRatePrescaler_2
 };
 
-void spiInit(SPI_TypeDef *SPIx)
-{
+void spiInit(SPI_TypeDef *SPIx) {
 
     SPI_InitTypeDef SPI_InitStructure;
     GPIO_InitTypeDef GPIO_InitStructure;
@@ -22,8 +20,7 @@ void spiInit(SPI_TypeDef *SPIx)
     GPIO_StructInit(&GPIO_InitStructure);
     SPI_StructInit(&SPI_InitStructure);
 
-    if (SPIx == SPI2)
-    {
+    if (SPIx == SPI2) {
         // Enable clocks
         RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
         RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB |
@@ -38,9 +35,7 @@ void spiInit(SPI_TypeDef *SPIx)
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
         GPIO_Init(GPIOB, &GPIO_InitStructure);
-    }
-    else
-    {
+    } else {
         return ;
     }
 
@@ -57,8 +52,7 @@ void spiInit(SPI_TypeDef *SPIx)
 }
 
 int spiReadWrite(SPI_TypeDef *SPIx, uint8_t *rbuf,
-                 const uint8_t *tbuf, int cnt, enum spiSpeed speed)
-{
+                 const uint8_t *tbuf, int cnt, enum spiSpeed speed) {
 
     SPI_DataSizeConfig(SPIx, SPI_DataSize_8b);
 
@@ -67,24 +61,17 @@ int spiReadWrite(SPI_TypeDef *SPIx, uint8_t *rbuf,
     SPIx->CR1 = (SPIx->CR1 & ~SPI_BaudRatePrescaler_256) |
                 speeds[speed];
 
-    for (i = 0; i < cnt; i++)
-    {
-        if (tbuf)
-        {
+    for (i = 0; i < cnt; i++) {
+        if (tbuf) {
             SPI_I2S_SendData(SPIx, *tbuf++);
-        }
-        else
-        {
+        } else {
             SPI_I2S_SendData(SPIx, 0xff);
         }
 
         while (SPI_I2S_GetFlagStatus(SPIx, SPI_I2S_FLAG_RXNE) == RESET);
-        if (rbuf)
-        {
+        if (rbuf) {
             *rbuf++ = SPI_I2S_ReceiveData(SPIx);
-        }
-        else
-        {
+        } else {
             SPI_I2S_ReceiveData(SPIx);
         }
     }
@@ -92,8 +79,7 @@ int spiReadWrite(SPI_TypeDef *SPIx, uint8_t *rbuf,
 }
 
 int spiReadWrite16(SPI_TypeDef *SPIx, uint16_t *rbuf,
-                   const uint16_t *tbuf, int cnt, enum spiSpeed speed)
-{
+                   const uint16_t *tbuf, int cnt, enum spiSpeed speed) {
 
     SPI_DataSizeConfig(SPIx, SPI_DataSize_16b);
 
@@ -102,24 +88,17 @@ int spiReadWrite16(SPI_TypeDef *SPIx, uint16_t *rbuf,
     SPIx->CR1 = (SPIx->CR1 & ~SPI_BaudRatePrescaler_256) |
                 speeds[speed];
 
-    for (i = 0; i < cnt; i++)
-    {
-        if (tbuf)
-        {
+    for (i = 0; i < cnt; i++) {
+        if (tbuf) {
             SPI_I2S_SendData(SPIx, *tbuf++);
-        }
-        else
-        {
+        } else {
             SPI_I2S_SendData(SPIx, 0xff);
         }
 
         while (SPI_I2S_GetFlagStatus(SPIx, SPI_I2S_FLAG_RXNE) == RESET);
-        if (rbuf)
-        {
+        if (rbuf) {
             *rbuf++ = SPI_I2S_ReceiveData(SPIx);
-        }
-        else
-        {
+        } else {
             SPI_I2S_ReceiveData(SPIx);
         }
     }

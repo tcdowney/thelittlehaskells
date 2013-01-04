@@ -3,8 +3,7 @@
 
 #include <stm32f10x_i2c.h>
 
-typedef enum
-{
+typedef enum {
     Error = 0,
     Success = !Error
 } Status;

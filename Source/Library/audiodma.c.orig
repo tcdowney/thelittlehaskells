@@ -21,24 +21,21 @@ DMA_InitTypeDef            DMA_InitStructure;
 TIM_TimeBaseInitTypeDef    TIM_TimeBaseStructure;
 NVIC_InitTypeDef           NVIC_InitStructure;
 
-void audioplayerStart()
-{
+void audioplayerStart() {
     DMA_Cmd(DMA1_Channel3, ENABLE);
     DAC_Cmd(DAC_Channel_1, ENABLE);
     DAC_DMACmd(DAC_Channel_1, ENABLE);
     TIM_Cmd(TIM3, ENABLE);
 }
 
-void audioplayerStop()
-{
+void audioplayerStop() {
     DMA_Cmd(DMA1_Channel3, DISABLE);
     DAC_Cmd(DAC_Channel_1, DISABLE);
     DAC_DMACmd(DAC_Channel_1, DISABLE);
     TIM_Cmd(TIM3, DISABLE);
 }
 
-void audioplayerInit(unsigned int sampleRate)
-{
+void audioplayerInit(unsigned int sampleRate) {
     int i;
     for (i = 0; i < A440LEN; i++)
         outbuf[i] = a440[i];
@@ -108,18 +105,14 @@ void audioplayerInit(unsigned int sampleRate)
 /*! DMAHandlerstart !*/
 int completed; // count cycles
 
-void DMA1_Channel3_IRQHandler(void)
-{
+void DMA1_Channel3_IRQHandler(void) {
     int i;
-    if (DMA_GetITStatus(DMA1_IT_TC3))       // Transfer complete
-    {
+    if (DMA_GetITStatus(DMA1_IT_TC3)) {     // Transfer complete
         for (i = A440LEN/2; i < A440LEN; i++)
             outbuf[i] = a440[i];
         completed++;
         DMA_ClearITPendingBit(DMA1_IT_TC3);
-    }
-    else if (DMA_GetITStatus(DMA1_IT_HT3))     // Half Transfer complete
-    {
+    } else if (DMA_GetITStatus(DMA1_IT_HT3)) { // Half Transfer complete
         for (i = 0; i < A440LEN/2; i++)
             outbuf[i] = a440[i];
         DMA_ClearITPendingBit(DMA1_IT_HT3);

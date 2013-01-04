@@ -33,7 +33,8 @@ extern "C" {
     /* Definitions of volume management */
 
 #if _MULTI_PARTITION		/* Multiple partition configuration */
-    typedef struct {
+    typedef struct
+    {
         BYTE pd;	/* Physical drive number */
         BYTE pt;	/* Partition: 0:Auto detect, 1-4:Forced partition) */
     } PARTITION;
@@ -74,7 +75,8 @@ extern "C" {
 
     /* File system object structure (FATFS) */
 
-    typedef struct {
+    typedef struct
+    {
         BYTE	fs_type;		/* FAT sub-type (0:Not mounted) */
         BYTE	drv;			/* Physical drive number */
         BYTE	csize;			/* Sectors per cluster (1,2,4...128) */
@@ -110,7 +112,8 @@ extern "C" {
 
     /* File object structure (FIL) */
 
-    typedef struct {
+    typedef struct
+    {
         FATFS*	fs;				/* Pointer to the owner file system object */
         WORD	id;				/* Owner file system mount ID */
         BYTE	flag;			/* File status flags */
@@ -139,7 +142,8 @@ extern "C" {
 
     /* Directory object structure (DIR) */
 
-    typedef struct {
+    typedef struct
+    {
         FATFS*	fs;				/* Pointer to the owner file system object */
         WORD	id;				/* Owner file system mount ID */
         WORD	index;			/* Current read/write index number */
@@ -158,7 +162,8 @@ extern "C" {
 
     /* File status structure (FILINFO) */
 
-    typedef struct {
+    typedef struct
+    {
         DWORD	fsize;			/* File size */
         WORD	fdate;			/* Last modified date */
         WORD	ftime;			/* Last modified time */
@@ -174,7 +179,8 @@ extern "C" {
 
     /* File function return code (FRESULT) */
 
-    typedef enum {
+    typedef enum
+    {
         FR_OK = 0,				/* (0) Succeeded */
         FR_DISK_ERR,			/* (1) A hard error occured in the low level disk I/O layer */
         FR_INT_ERR,				/* (2) Assertion failed */

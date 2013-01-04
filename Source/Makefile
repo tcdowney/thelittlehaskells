@@ -1,9 +1,10 @@
-TEMPLATEROOT =/l/arm/STM32-Template
+TEMPLATEROOT =/home/tcdowney/Documents/STM32/STM32-Template
 
 # compilation flags for gdb
 
 CFLAGS += -g -I./Library 
 CFLAGS += -g -I./Library/ff9/src 
+CFLAGS += -fasynchronous-unwind-tables
 ASFLAGS += -g
 LDLIBS += -lm
 

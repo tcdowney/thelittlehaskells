@@ -15,8 +15,7 @@
 #define NUNCHUCK_ADDRESS 0xA4
 
 //General properties of the game sprites
-typedef struct
-{
+typedef struct {
     int8_t x;
     int8_t y;
     int8_t height;
@@ -45,20 +44,17 @@ uint16_t b = 0;
 
 
 //Shifts the joystick values from the first (ship) nunchuck into a more manageable range
-int joyShift(int joyVal)
-{
+int joyShift(int joyVal) {
     return (joyVal / 30);
 }
 
 //Shifts the joystick values from the second (reticule) nunchuck into a more manageable range
-int joyShift2(int joyVal)
-{
+int joyShift2(int joyVal) {
     return (joyVal / 20);
 }
 
 //Play an auditory beep over the speaker for the specified length of time (in milliseconds)
-void Beep(int length)
-{
+void Beep(int length) {
     audioplayerInit(44100);
     audioplayerStart();
     Delay(length);
@@ -66,8 +62,7 @@ void Beep(int length)
 }
 
 //Load full screen background images from the bottom up
-void loadBackground(char *img, int x, int y)
-{
+void loadBackground(char *img, int x, int y) {
 
     //FatFS variables
     FATFS Fatfs;
@@ -83,11 +78,9 @@ void loadBackground(char *img, int x, int y)
     f =  f_read(&Fil, &info, sizeof info, &br);
 
     int i, j;
-    for (i = 0; i < info.height; i++)
-    {
+    for (i = 0; i < info.height; i++) {
         f = f_read(&Fil, &receive,sizeof receive, &br);
-        for (j = 0; j < info.width; j++)
-        {
+        for (j = 0; j < info.width; j++) {
             pixel24 = receive[j];
             r = (pixel24.r >> 3) << 11;
             g = (pixel24.g >> 2) << 5;
@@ -119,8 +112,7 @@ void loadShip(char *img) {
   f = f_close(&Fil);
 }*/
 
-int main(void)
-{
+int main(void) {
 
     //Start system core clock
     if (SysTick_Config(SystemCoreClock / 1000))
@@ -257,16 +249,14 @@ int main(void)
 
     //Intro screens
     int i;
-    for (i = 0; i < 5; i++)
-    {
+    for (i = 0; i < 5; i++) {
         //Reset nunchuck state
         I2C_Write(I2C1, reset, 1, NUNCHUCK_ADDRESS);
         I2C_Write(I2C2, reset, 1, NUNCHUCK_ADDRESS);
 
         loadBackground(strs[i], 0 , 0);
         Delay(200);
-        while (1)
-        {
+        while (1) {
             Delay(100);
             //Read nunchuck data
             I2C_Write(I2C1, reset, 1, NUNCHUCK_ADDRESS);
@@ -276,8 +266,7 @@ int main(void)
             // Update the screen based on the button presses
             cNotPressed1 = ((data1[5] >> 1) & 0x1);
 
-            if (!cNotPressed1)
-            {
+            if (!cNotPressed1) {
                 break;
             }
         }
@@ -301,14 +290,12 @@ int main(void)
 
 
     //Start the game!
-    while(1)
-    {
+    while(1) {
         smooth++;
 
 
         //THis shield is only activated when a player crashes
-        if (shield > 0)
-        {
+        if (shield > 0) {
             shield--;
         }
 
@@ -336,12 +323,10 @@ int main(void)
         smoothjy2 += jy2;
 
 
-        if (smooth % 5 == 0)
-        {
+        if (smooth % 5 == 0) {
 
             //Manipulate the score
-            if (score % 100 == 0)
-            {
+            if (score % 100 == 0) {
                 haxblox++;
                 fillBlockColor(hax.x, ST7735_height - (haxblox * 20), hax.height, hax.width, GREEN);
             }
@@ -386,23 +371,17 @@ int main(void)
             // Boundary checking for the ship (x1,y1)
 
             //Screen border checking
-            if (ship.x < 20)
-            {
+            if (ship.x < 20) {
                 x1 = 20;
                 ship.x = x1;
-            }
-            else if ((x1 + 20) > ST7735_width - 1)
-            {
+            } else if ((x1 + 20) > ST7735_width - 1) {
                 x1 = ST7735_width - 20;
                 ship.x = x1;
             }
-            if (y1 < 0)
-            {
+            if (y1 < 0) {
                 y1 = 0;
                 ship.y = y1;
-            }
-            else if ((y1 + 30) > ST7735_height - 1)
-            {
+            } else if ((y1 + 30) > ST7735_height - 1) {
                 y1 = ST7735_height - 30;
                 ship.y = y1;
             }
@@ -410,60 +389,48 @@ int main(void)
             //Collision detection for the ship with various objects
             //Certain things need to be inverted to account for reverse loading of BMP vs regular graphics
             if ((ship.x + ship.width > ob1.x) && (ship.x < (ob1.x + ob1.width))
-                    && (ship.y + ship.height > 160 - ob1.y) && (ship.y < 160 - (ob1.y + ob1.height)))
-            {
+                    && (ship.y + ship.height > 160 - ob1.y) && (ship.y < 160 - (ob1.y + ob1.height))) {
                 //writeString(RED, BLACK, "CRASH 1", 0, 20);
-                if (shield == 0)
-                {
+                if (shield == 0) {
                     crashes++;
                     fillBlockColor(damage.x, ST7735_height - (crashes * 20), damage.height, damage.width, RED);
                     shield = sfull;
                     Beep(250);
                 }
-            }
-            else   //writeString(BLACK, BLACK, "CRASH 1", 0, 20);
+            } else //writeString(BLACK, BLACK, "CRASH 1", 0, 20);
 
                 if ((ship.x + ship.width > ob2.x) && (ship.x < (ob2.x + ob2.width))
-                        && (ship.y + ship.height > 160 - ob2.y) && (ship.y < 160 - (ob2.y + ob2.height)))
-                {
+                        && (ship.y + ship.height > 160 - ob2.y) && (ship.y < 160 - (ob2.y + ob2.height))) {
                     //writeString(RED, BLACK, "CRASH 2", 0, 40);
-                    if (shield == 0)
-                    {
+                    if (shield == 0) {
                         crashes++;
                         fillBlockColor(damage.x, ST7735_height - (crashes * 20), damage.height, damage.width, RED);
                         shield = sfull;
                         Beep(250);
                     }
-                }
-                else   //writeString(BLACK, BLACK, "CRASH 2", 0, 40);
+                } else //writeString(BLACK, BLACK, "CRASH 2", 0, 40);
 
                     if ((ship.x + ship.width > ob3.x) && (ship.x < (ob3.x + ob3.width))
-                            && (ship.y + ship.height > 160 - ob3.y) && (ship.y < 160 - (ob3.y + ob3.height)))
-                    {
+                            && (ship.y + ship.height > 160 - ob3.y) && (ship.y < 160 - (ob3.y + ob3.height))) {
                         //writeString(RED, BLACK, "CRASH 3", 0, 60);
-                        if (shield == 0)
-                        {
+                        if (shield == 0) {
                             crashes++;
                             fillBlockColor(damage.x, ST7735_height - (crashes * 20), damage.height, damage.width, RED);
                             shield = sfull;
                             Beep(250);
                         }
-                    }
-                    else   //writeString(BLACK, BLACK, "CRASH 3", 0, 60);
+                    } else //writeString(BLACK, BLACK, "CRASH 3", 0, 60);
 
                         if ((ship.x + ship.width > ob4.x) && (ship.x < (ob4.x + ob4.width))
-                                && (ship.y + ship.height > 160 - ob4.y) && (ship.y < 160 - (ob4.y + ob4.height)))
-                        {
+                                && (ship.y + ship.height > 160 - ob4.y) && (ship.y < 160 - (ob4.y + ob4.height))) {
                             //writeString(RED, BLACK, "CRASH 4", 0, 60);
-                            if (shield == 0)
-                            {
+                            if (shield == 0) {
                                 crashes++;
                                 fillBlockColor(damage.x, ST7735_height - (crashes * 20), damage.height, damage.width, RED);
                                 shield = sfull;
                                 Beep(250);
                             }
-                        }
-                        else   //writeString(BLACK, BLACK, "CRASH 4", 0, 80);
+                        } else //writeString(BLACK, BLACK, "CRASH 4", 0, 80);
 
                             /*Reticule collisions
                             if ((reticule.x + reticule.width > ob1.x) && (reticule.x < (ob1.x + ob1.width))
@@ -491,68 +458,54 @@ int main(void)
                             else writeString(BLACK, BLACK, "CRASH 4", 60, 80);*/
 
                             if ((reticule.x + reticule.width > ship.x) && (reticule.x < (ship.x + ship.width))
-                                    && (reticule.y + reticule.height > ship.y) && (reticule.y < (ship.y + ship.height)))
-                            {
+                                    && (reticule.y + reticule.height > ship.y) && (reticule.y < (ship.y + ship.height))) {
                                 //writeString(RED, BLACK, "CRASH Ret", 0, 0);
-                            }
-                            else   //writeString(BLACK, BLACK, "CRASH Ret", 0, 0);
+                            } else //writeString(BLACK, BLACK, "CRASH Ret", 0, 0);
 
                                 //Boundary checking for the reticule (x2,y2)
-                                if (x2 < 20)
-                                {
+                                if (x2 < 20) {
                                     x2 = 20;
                                     reticule.x = x2;
-                                }
-                                else if ((x2 + 5) > ST7735_width - 1)
-                                {
+                                } else if ((x2 + 5) > ST7735_width - 1) {
                                     x2 = ST7735_width - 5;
                                     reticule.x = x2;
                                 }
-            if (y2 < 0)
-            {
+            if (y2 < 0) {
                 y2 = 0;
                 reticule.y = y2;
-            }
-            else if ((y2 + 17) > ST7735_height - 1)
-            {
+            } else if ((y2 + 17) > ST7735_height - 1) {
                 y2 = ST7735_height - 17;
                 reticule.y = y2;
             }
 
             //Boundary checking for falling objects
-            if ((ob1.y + ob1.height) > ST7735_height - 1)
-            {
+            if ((ob1.y + ob1.height) > ST7735_height - 1) {
                 ob1.y = 0;
                 //ob1.x = x1;
             }
 
-            if ((ob2.y + ob2.height) > ST7735_height - 1)
-            {
+            if ((ob2.y + ob2.height) > ST7735_height - 1) {
                 ob2.y = 0;
                 //ob2.x = x2;
             }
 
-            if ((ob3.y + ob3.height) > ST7735_height - 1)
-            {
+            if ((ob3.y + ob3.height) > ST7735_height - 1) {
                 ob3.y = 0;
                 //ob3.x = x2 - x1;
             }
 
-            if ((ob4.y + ob4.height) > ST7735_height - 1)
-            {
+            if ((ob4.y + ob4.height) > ST7735_height - 1) {
                 ob4.y = 0;
                 //ob4.x = x2 - x1;
             }
 
 
             //Game state checks
-            if (crashes > maxCrashes)
-            {
+            if (crashes > maxCrashes) {
                 victory = 0;
                 break;
             }
-            if (haxblox > 7)
-            {
+            if (haxblox > 7) {
                 victory = 1;
                 break;
             }
@@ -583,13 +536,11 @@ int main(void)
         }
     }
 
-    if (victory)
-    {
+    if (victory) {
         loadBackground("victory.bmp", 0 , 0);
     }
 
-    else
-    {
+    else {
         loadBackground("gameover.bmp", 0 , 0);
     }
     Beep(1000);
@@ -597,8 +548,7 @@ int main(void)
     return 0;
 }
 
-DWORD get_fattime (void)
-{
+DWORD get_fattime (void) {
     return	  ((DWORD)(2012 - 1980) << 25)	/* Year = 2012 */
               | ((DWORD)1 << 21)      /* Month = 1 */
               | ((DWORD)1 << 16)	/* Day_m = 1*/
@@ -607,8 +557,7 @@ DWORD get_fattime (void)
               | ((DWORD)0 >> 1);      /* Sec = 0 */
 }
 #ifdef USE_FULL_ASSERT
-void assert_failed(uint8_t* file, uint32_t line)
-{
+void assert_failed(uint8_t* file, uint32_t line) {
     while(1);
 }
 #endif

@@ -14,29 +14,25 @@
 
 static __IO uint32_t TimingDelay;
 
-void Delay(uint32_t nTime)
-{
+void Delay(uint32_t nTime) {
     TimingDelay = nTime;
     while(TimingDelay != 0);
 }
 
-void SysTick_Handler(void)
-{
+void SysTick_Handler(void) {
     if (TimingDelay != 0x00)
         TimingDelay--;
 }
 
 // Utility functions (for drawLine function) -------------------------------
-int abs(int x)
-{
+int abs(int x) {
     if (x < 0)
         return -1*x;
     else
         return x;
 }
 
-void swap (int *x, int *y)
-{
+void swap (int *x, int *y) {
     int temp = *x;
     *x = *y;
     *y = temp;
@@ -44,8 +40,7 @@ void swap (int *x, int *y)
 
 // command buffer structure ------------------------------------------------
 
-struct ST7735_cmdBuf
-{
+struct ST7735_cmdBuf {
     uint8_t command;   // ST7735 command byte
     uint8_t delay;     // ms delay after
     uint8_t len;       // length of parameter data
@@ -54,8 +49,7 @@ struct ST7735_cmdBuf
 
 // Initialization commands -------------------------------------------------
 
-static const struct ST7735_cmdBuf initializers[] =
-{
+static const struct ST7735_cmdBuf initializers[] = {
     // SWRESET Software reset
     {0x01, 150, 0, 0},
     // SLPOUT Leave sleep mode
@@ -114,8 +108,7 @@ static const struct ST7735_cmdBuf initializers[] =
 
 // Font used for writing text ---------------------------------------------
 
-const uint8_t ASCII[] =
-{
+const uint8_t ASCII[] = {
     0x00, 0x00, 0x00, 0x00, 0x00,  // 0
     0x3E, 0x5B, 0x4F, 0x5B, 0x3E,  // 1
     0x3E, 0x6B, 0x4F, 0x6B, 0x3E,  // 2
@@ -375,8 +368,7 @@ const uint8_t ASCII[] =
 
 // LCD write functions ------------------------------------------------------
 
-static void LcdWrite(char dc, const char *data, int half, int cnt)
-{
+static void LcdWrite(char dc, const char *data, int half, int cnt) {
     GPIO_WriteBit(LCD_PORT, GPIO_PIN_DC, dc); // dc 1 = data, 0 = control
     GPIO_ResetBits(LCD_PORT, GPIO_PIN_SCE);
     xchng_datablock(SPILCD, half, data, 0, cnt);
@@ -384,8 +376,7 @@ static void LcdWrite(char dc, const char *data, int half, int cnt)
     GPIO_SetBits(LCD_PORT, GPIO_PIN_SCE);
 }
 
-static void ST7735_writeCmd(uint8_t c)
-{
+static void ST7735_writeCmd(uint8_t c) {
     LcdWrite(LCD_C, &c, 8, 1);
 }
 
@@ -393,12 +384,10 @@ static void ST7735_writeCmd(uint8_t c)
 
 void ST7735_setAddrWindow(uint16_t x0, uint16_t y0,
                           uint16_t x1, uint16_t y1,
-                          uint8_t madctl)
-{
+                          uint8_t madctl) {
     madctl = MADVAL(madctl);
 
-    if (madctl != madctlcurrent)
-    {
+    if (madctl != madctlcurrent) {
         ST7735_writeCmd(ST7735_MADCTL);
         LcdWrite(LCD_D, &madctl, 8, 1);
         madctlcurrent = madctl;
@@ -415,27 +404,23 @@ void ST7735_setAddrWindow(uint16_t x0, uint16_t y0,
     ST7735_writeCmd(ST7735_RAMWR);
 }
 
-void ST7735_pushColor(uint16_t *color, int cnt)
-{
+void ST7735_pushColor(uint16_t *color, int cnt) {
     LcdWrite(LCD_D, color, 16, cnt);
 }
 
 //Image related functions
 
-void imageLine(int x, int y, int width, uint16_t *color)
-{
+void imageLine(int x, int y, int width, uint16_t *color) {
     ST7735_setAddrWindow(x, y, width-1, y, MADCTLBMP);
     ST7735_pushColor(color, width);
 }
 
-void colorLine(int x, int y, int width, uint16_t *color)
-{
+void colorLine(int x, int y, int width, uint16_t *color) {
     ST7735_setAddrWindow(x, y, width-1, y, MADCTLGRAPHICS);
     ST7735_pushColor(color, width);
 }
 
-void placeImage(struct bmppixel *img, int x, int y, int height, int width)
-{
+void placeImage(struct bmppixel *img, int x, int y, int height, int width) {
     struct bmppixel pixel24;
 
     uint16_t transfer[128];
@@ -448,10 +433,8 @@ void placeImage(struct bmppixel *img, int x, int y, int height, int width)
     int i, j, k;
     k = 0;
 
-    for (i = 0; i < height; i++)
-    {
-        for (j = 0; j < width; j++)
-        {
+    for (i = 0; i < height; i++) {
+        for (j = 0; j < width; j++) {
             pixel24 = img[k];
             r = (pixel24.r >> 3) << 11;
             g = (pixel24.g >> 2) << 5;
@@ -466,28 +449,22 @@ void placeImage(struct bmppixel *img, int x, int y, int height, int width)
 
 
 //Color fills
-void fillScreen(uint16_t color)
-{
+void fillScreen(uint16_t color) {
     uint8_t x,y;
     ST7735_setAddrWindow(0, 0, ST7735_width -1, ST7735_height -1, MADCTLGRAPHICS);
-    for (x=0; x < ST7735_width; x++)
-    {
-        for (y=0; y < ST7735_height; y++)
-        {
+    for (x=0; x < ST7735_width; x++) {
+        for (y=0; y < ST7735_height; y++) {
             ST7735_pushColor(&color, 1);
         }
     }
 }
 
-void fillBlockColor( int x, int y, int height, int width, uint16_t color)
-{
+void fillBlockColor( int x, int y, int height, int width, uint16_t color) {
     int i, j;
     uint16_t transfer[128];
     uint16_t pixel16;
-    for (i = 0; i < height; i++)
-    {
-        for (j = 0; j < width; j++)
-        {
+    for (i = 0; i < height; i++) {
+        for (j = 0; j < width; j++) {
             pixel16 = color;
             transfer[j] = pixel16;
         }
@@ -495,8 +472,7 @@ void fillBlockColor( int x, int y, int height, int width, uint16_t color)
     }
 }
 
-void ST7735_backLight(uint8_t on)
-{
+void ST7735_backLight(uint8_t on) {
     if (on)
         GPIO_WriteBit(LCD_PORT_BKL, GPIO_PIN_BKL, LOW);
     else
@@ -507,14 +483,12 @@ void ST7735_backLight(uint8_t on)
 // drawLine and drawCircle functions were adapted from the Adafruit-ST7735-
 // Library provided in the lab manual. --------------------------------------
 
-void writePixel(int x, int y, uint16_t color)
-{
+void writePixel(int x, int y, uint16_t color) {
     ST7735_setAddrWindow(x, y, x, y, MADCTLGRAPHICS);
     ST7735_pushColor(&color, 1);
 }
 
-void drawCircle(int x0, int y0, int r, uint16_t color)
-{
+void drawCircle(int x0, int y0, int r, uint16_t color) {
     int f = 1 - r;
     int ddF_x = 1;
     int ddF_y = -2 * r;
@@ -526,10 +500,8 @@ void drawCircle(int x0, int y0, int r, uint16_t color)
     writePixel(x0+r, y0, color);
     writePixel(x0-r, y0, color);
 
-    while (x<y)
-    {
-        if (f >= 0)
-        {
+    while (x<y) {
+        if (f >= 0) {
             y--;
             ddF_y += 2;
             f += ddF_y;
@@ -550,17 +522,14 @@ void drawCircle(int x0, int y0, int r, uint16_t color)
     }
 }
 
-void drawLine(int x0, int y0,int x1, int y1,uint16_t color)
-{
+void drawLine(int x0, int y0,int x1, int y1,uint16_t color) {
     int steep = abs(y1 - y0) > abs(x1 - x0);
-    if (steep)
-    {
+    if (steep) {
         swap(&x0, &y0);
         swap(&x1, &y1);
     }
 
-    if (x0 > x1)
-    {
+    if (x0 > x1) {
         swap(&x0, &x1);
         swap(&y0, &y1);
     }
@@ -572,28 +541,20 @@ void drawLine(int x0, int y0,int x1, int y1,uint16_t color)
     int err = dx / 2;
     int ystep;
 
-    if (y0 < y1)
-    {
+    if (y0 < y1) {
         ystep = 1;
-    }
-    else
-    {
+    } else {
         ystep = -1;
     }
 
-    for (; x0<=x1; x0++)
-    {
-        if (steep)
-        {
+    for (; x0<=x1; x0++) {
+        if (steep) {
             writePixel(y0, x0, color);
-        }
-        else
-        {
+        } else {
             writePixel(x0, y0, color);
         }
         err -= dy;
-        if (err < 0)
-        {
+        if (err < 0) {
             y0 += ystep;
             err += dx;
         }
@@ -602,15 +563,12 @@ void drawLine(int x0, int y0,int x1, int y1,uint16_t color)
 
 // writeChar and writeString for writing text on the lcd ---------------------
 
-void writeChar(uint16_t fg, uint16_t bg, char c, int x, int y)
-{
+void writeChar(uint16_t fg, uint16_t bg, char c, int x, int y) {
     uint8_t row, col;
     int pos = c * 5;
     ST7735_setAddrWindow(x, y, x + 4,y + 7, MADCTLGRAPHICS);
-    for (row = 0; row < 8; row++)
-    {
-        for (col = 0; col < 5; col++)
-        {
+    for (row = 0; row < 8; row++) {
+        for (col = 0; col < 5; col++) {
             if ((ASCII[pos + col] >> row) & 0x1)
                 ST7735_pushColor(&fg, 1);
             else
@@ -619,25 +577,19 @@ void writeChar(uint16_t fg, uint16_t bg, char c, int x, int y)
     }
 }
 
-void writeCharDMA(uint16_t fg, uint16_t bg, char c, int x, int y)
-{
+void writeCharDMA(uint16_t fg, uint16_t bg, char c, int x, int y) {
     uint8_t row, col;
     uint8_t k = 0;
 
     uint16_t colors[40] = {0};
     int pos = c * 5;
     ST7735_setAddrWindow(x, y, x + 4,y + 7, MADCTLGRAPHICS);
-    for (row = 0; row < 8; row++)
-    {
-        for (col = 0; col < 5; col++)
-        {
-            if ((ASCII[pos + col] >> row) & 0x1)
-            {
+    for (row = 0; row < 8; row++) {
+        for (col = 0; col < 5; col++) {
+            if ((ASCII[pos + col] >> row) & 0x1) {
                 colors[k] = fg;
                 k++;
-            }
-            else
-            {
+            } else {
                 colors[k] = bg;
                 k++;
             }
@@ -646,15 +598,12 @@ void writeCharDMA(uint16_t fg, uint16_t bg, char c, int x, int y)
     ST7735_pushColor(&colors, 40);
 }
 
-void writeString(uint16_t fg, uint16_t bg, char *str, int x, int y)
-{
+void writeString(uint16_t fg, uint16_t bg, char *str, int x, int y) {
     int row = y;
     int col = x;
 
-    while (*str != '\0')
-    {
-        if ((col + 6) > (ST7735_width - 1))
-        {
+    while (*str != '\0') {
+        if ((col + 6) > (ST7735_width - 1)) {
             row = row + 10;
             col = 0;
         }
@@ -666,8 +615,7 @@ void writeString(uint16_t fg, uint16_t bg, char *str, int x, int y)
 
 // LCD initialization --------------------------------------------------------
 
-void ST7735_init()
-{
+void ST7735_init() {
     GPIO_InitTypeDef GPIO_InitStructure;
     GPIO_StructInit(&GPIO_InitStructure);
     const struct ST7735_cmdBuf *cmd;
@@ -695,8 +643,7 @@ void ST7735_init()
     GPIO_WriteBit(LCD_PORT, GPIO_PIN_RST, HIGH);
     Delay(10);
 
-    for (cmd = initializers; cmd->command; cmd++)
-    {
+    for (cmd = initializers; cmd->command; cmd++) {
         LcdWrite(LCD_C, &(cmd->command), 8, 1);
         if (cmd->len)
             LcdWrite(LCD_D, cmd->data, 8, cmd->len);
